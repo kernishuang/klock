@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>翻頁時鐘</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto+Slab:wght@400&display=swap" rel="stylesheet">
 <style>
 body {
   margin:0;
   background:#000;
   color:#fff;
-  font-family: Helvetica, sans-serif;
+  font-family: 'Roboto Slab', serif;
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -31,19 +31,39 @@ body {
   align-items:center;
 }
 .flip {
-  background:#111;
-  border-radius:14px;
-  padding:35px 40px;
-  margin:8px;
+  position: relative;
+  perspective: 1000px;
+  margin: 0 5px;
+}
+.flip .top, .flip .bottom {
+  display:block;
+  height: 75px; /* 半高度 */
+  overflow:hidden;
   font-size:150px;
-  font-family: 'Orbitron', monospace;
+  font-family:'Orbitron', monospace;
   font-weight:bold;
-  box-shadow:0 12px 30px rgba(0,0,0,0.8);
-  min-width:150px;
-  text-align:center;
-  color: #fff;
-  text-shadow: 0 4px 8px rgba(0,0,0,0.7);
+  color:#fff;
+  text-shadow:0 4px 8px rgba(0,0,0,0.7);
   background: linear-gradient(to bottom, #333, #000);
+  border-radius:14px;
+  text-align:center;
+}
+.flip .bottom {
+  border-top:1px solid #222;
+}
+.flip .flip-top {
+  animation: flipTop 0.5s forwards;
+}
+.flip .flip-bottom {
+  animation: flipBottom 0.5s forwards;
+}
+@keyframes flipTop {
+  0% { transform: rotateX(0deg); }
+  100% { transform: rotateX(-90deg); }
+}
+@keyframes flipBottom {
+  0% { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
 }
 .colon {
   font-size:120px;
@@ -57,31 +77,58 @@ body {
 </style>
 </head>
 <body>
-<div id="date"></div>
-<div id="weekday"></div>
+<div id="date">2026年3月12日</div>
+<div id="weekday">星期四</div>
 <div class="clock">
-  <div class="flip" id="h">00</div>
+  <div class="flip" id="h" data-current="00">
+    <span class="top">00</span>
+    <span class="bottom">00</span>
+  </div>
   <div class="colon">:</div>
-  <div class="flip" id="m">00</div>
+  <div class="flip" id="m" data-current="00">
+    <span class="top">00</span>
+    <span class="bottom">00</span>
+  </div>
 </div>
 <input type="range" min="40" max="130" value="70" id="slider">
 
 <script>
 var week=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
 
-function update(){
-  var now=new Date();
-  var y=now.getFullYear();
-  var mo=now.getMonth()+1;
-  var d=now.getDate();
-  var w=week[now.getDay()];
-  var h=("0"+now.getHours()).slice(-2);
-  var m=("0"+now.getMinutes()).slice(-2);
+function flipDigit(flip, newNumber){
+  let top = flip.querySelector(".top");
+  let bottom = flip.querySelector(".bottom");
+  top.textContent = flip.dataset.current;
+  bottom.textContent = newNumber;
 
-  document.getElementById("date").innerHTML=y+"年"+mo+"月"+d+"日";
-  document.getElementById("weekday").innerHTML=w;
-  document.getElementById("h").innerHTML=h;
-  document.getElementById("m").innerHTML=m;
+  top.classList.add("flip-top");
+  bottom.classList.add("flip-bottom");
+
+  setTimeout(()=>{
+    flip.dataset.current = newNumber;
+    top.textContent = newNumber;
+    top.classList.remove("flip-top");
+    bottom.classList.remove("flip-bottom");
+  },500);
+}
+
+function update(){
+  var now = new Date();
+  var y = now.getFullYear();
+  var mo = now.getMonth()+1;
+  var d = now.getDate();
+  var w = week[now.getDay()];
+  var h = ("0"+now.getHours()).slice(-2);
+  var m = ("0"+now.getMinutes()).slice(-2);
+
+  document.getElementById("date").innerHTML = y+"年"+mo+"月"+d+"日";
+  document.getElementById("weekday").innerHTML = w;
+
+  let hFlip = document.getElementById("h");
+  let mFlip = document.getElementById("m");
+
+  if(hFlip.dataset.current !== h) flipDigit(hFlip, h);
+  if(mFlip.dataset.current !== m) flipDigit(mFlip, m);
 }
 
 setInterval(update,1000);
