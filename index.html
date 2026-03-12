@@ -4,13 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>翻頁時鐘</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto+Slab:wght@400&display=swap" rel="stylesheet">
 <style>
 body {
   margin:0;
   background:#000;
   color:#fff;
-  font-family: 'Roboto Slab', serif;
+  font-family: Helvetica, Arial, sans-serif;
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -32,21 +31,23 @@ body {
 }
 .flip {
   position: relative;
-  perspective: 1000px;
+  perspective: 800px;
   margin: 0 5px;
 }
 .flip .top, .flip .bottom {
   display:block;
-  height: 75px; /* 半高度 */
+  height:75px;
   overflow:hidden;
-  font-size:150px;
-  font-family:'Orbitron', monospace;
+  font-size:130px;
+  font-family:'Courier New', monospace;
   font-weight:bold;
   color:#fff;
   text-shadow:0 4px 8px rgba(0,0,0,0.7);
   background: linear-gradient(to bottom, #333, #000);
   border-radius:14px;
   text-align:center;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 .flip .bottom {
   border-top:1px solid #222;
@@ -95,9 +96,18 @@ body {
 <script>
 var week=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
 
+// 初始化上下半部
+function initFlip(flip){
+  let num = flip.dataset.current;
+  flip.querySelector(".top").textContent = num;
+  flip.querySelector(".bottom").textContent = num;
+}
+
 function flipDigit(flip, newNumber){
   let top = flip.querySelector(".top");
   let bottom = flip.querySelector(".bottom");
+
+  // 將上半部設為舊數字，下半部設為新數字
   top.textContent = flip.dataset.current;
   bottom.textContent = newNumber;
 
@@ -130,6 +140,10 @@ function update(){
   if(hFlip.dataset.current !== h) flipDigit(hFlip, h);
   if(mFlip.dataset.current !== m) flipDigit(mFlip, m);
 }
+
+// 初始化上下半部數字，保證第一次顯示正確
+initFlip(document.getElementById("h"));
+initFlip(document.getElementById("m"));
 
 setInterval(update,1000);
 update();
