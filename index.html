@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>翻頁時鐘</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<style>
+body {
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family: Helvetica, sans-serif;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+#date {
+  font-size:70px;
+  margin-bottom:10px;
+}
+#weekday {
+  font-size:40px;
+  margin-bottom:50px;
+  color:#bbb;
+}
+.clock {
+  display:flex;
+  align-items:center;
+}
+.flip {
+  background:#111;
+  border-radius:14px;
+  padding:35px 40px;
+  margin:8px;
+  font-size:150px;
+  font-family: 'Orbitron', monospace;
+  font-weight:bold;
+  box-shadow:0 12px 30px rgba(0,0,0,0.8);
+  min-width:150px;
+  text-align:center;
+  color: #fff;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.7);
+  background: linear-gradient(to bottom, #333, #000);
+}
+.colon {
+  font-size:120px;
+  margin:0 5px;
+}
+#slider {
+  position:fixed;
+  bottom:25px;
+  width:60%;
+}
+</style>
+</head>
+<body>
+<div id="date"></div>
+<div id="weekday"></div>
+<div class="clock">
+  <div class="flip" id="h">00</div>
+  <div class="colon">:</div>
+  <div class="flip" id="m">00</div>
+</div>
+<input type="range" min="40" max="130" value="70" id="slider">
+
+<script>
+var week=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+
+function update(){
+  var now=new Date();
+  var y=now.getFullYear();
+  var mo=now.getMonth()+1;
+  var d=now.getDate();
+  var w=week[now.getDay()];
+  var h=("0"+now.getHours()).slice(-2);
+  var m=("0"+now.getMinutes()).slice(-2);
+
+  document.getElementById("date").innerHTML=y+"年"+mo+"月"+d+"日";
+  document.getElementById("weekday").innerHTML=w;
+  document.getElementById("h").innerHTML=h;
+  document.getElementById("m").innerHTML=m;
+}
+
+setInterval(update,1000);
+update();
+
+document.getElementById("slider").oninput=function(){
+  document.getElementById("date").style.fontSize=this.value+"px";
+}
+</script>
+</body>
+</html>
